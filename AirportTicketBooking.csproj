@@ -7,4 +7,20 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Compile Remove="AirportTicketBookingDomain\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="AirportTicketBookingDomain\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="AirportTicketBookingDomain\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="AirportTicketBookingDomain\AirportTicketBookingDomain.csproj" />
+    </ItemGroup>
+
 </Project>
