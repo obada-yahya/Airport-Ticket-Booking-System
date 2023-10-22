@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirportTicketBooking", "AirportTicketBooking.csproj", "{97515074-B73F-431F-8AD0-CBE39AC01CD3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirportTicketBookingDomain", "AirportTicketBookingDomain\AirportTicketBookingDomain.csproj", "{FEB50931-6438-4438-8AFF-DDB8A608BC1B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{97515074-B73F-431F-8AD0-CBE39AC01CD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97515074-B73F-431F-8AD0-CBE39AC01CD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97515074-B73F-431F-8AD0-CBE39AC01CD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEB50931-6438-4438-8AFF-DDB8A608BC1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEB50931-6438-4438-8AFF-DDB8A608BC1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEB50931-6438-4438-8AFF-DDB8A608BC1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEB50931-6438-4438-8AFF-DDB8A608BC1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
