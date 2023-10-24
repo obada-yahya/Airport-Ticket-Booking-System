@@ -15,4 +15,15 @@ public static class PassengerHandler
             Tickets = new List<Ticket>()
         };
     }
+
+    public static string[] GetAttributesFromPassenger(Passenger passenger)
+    {
+        return new[]
+        {
+            passenger.PassengerId.ToString(),
+            passenger.FirstName,
+            passenger.LastName,
+            passenger.AccountBalance.ToString()
+        };
+    }
 }
