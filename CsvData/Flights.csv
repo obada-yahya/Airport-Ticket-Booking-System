@@ -1,0 +1,5 @@
+FlightId,FlightManagerId,Name,DepartureCountry,DepartureAirport,DepartureDate,DestinationCountry,ArrivalAirport,ArrivalDate,Capacity
+38711a60-f873-440f-b40e-c0365b187b12,FL123,Flight 1,USA,JFK,2023-10-25 08:00,France,CDG,2023-10-25 12:00,250
+FL456,FM789,Flight 2,Canada,YYZ,2023-10-26 09:30,Germany,FRA,2023-10-26 15:30,180
+FL789,FM123,Flight 3,UK,LHR,2023-10-27 14:15,Spain,MAD,2023-10-27 18:45,200
+b7fde8a2-f11a-47e1-ae61-7ec918784b8f,37eb0363-9080-467c-ab75-c096555b9b5b,obada,jenin,JK,2023-10-24 16:44,Gaza,GZ,2023-10-24 16:44,15
