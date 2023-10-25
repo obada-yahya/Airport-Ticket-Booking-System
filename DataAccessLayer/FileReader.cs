@@ -1,4 +1,4 @@
-﻿namespace AirportTicketBooking.DataLayer;
+﻿namespace AirportTicketBooking.DataAccessLayer;
 
 public abstract class FileReader
 {

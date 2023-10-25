@@ -1,39 +1,40 @@
-﻿using AirportTicketBookingDomain;
+﻿using AirportTicketBooking.DataAccessLayer;
 using AirportTicketBooking.Utils;
+using AirportTicketBookingDomain;
 
-namespace AirportTicketBooking.DataLayer;
+namespace AirportTicketBooking.Repositories.FlightRepositories;
 
-public sealed class PassengerFileReader : FileReader, IPassengerDatabase
+public sealed class FlightFileReader : FileReader, IFlightRepository
 {
-    private static PassengerFileReader? _instance;
+    private static FlightFileReader? _instance;
 
-    public static PassengerFileReader Instance
+    public static FlightFileReader Instance
     {
-        get { return _instance ??= new PassengerFileReader(); }
+        get { return _instance ??= new FlightFileReader(); }
     }
+    
+    private FlightFileReader(){}
 
-    private PassengerFileReader() {}
-
-    public void AddPassenger(Passenger passenger)
+    public void AddFlight(Flight flight)
     {
         try
         {
             var records = ReadFileRecords().ToList();
-            records.Add(PassengerHandler.GetAttributesFromPassenger(passenger));
+            records.Add(FlightHandler.GetAttributesFromFlight(flight));
             WriteToFile(records);
         }
         catch (Exception e)
         {
-            Console.WriteLine("An error occurred while adding the passenger, so the passenger was not added.");
+            Console.WriteLine("An error occurred while adding the flight, so the flight was not added.");
         }
     }
     
-    public Passenger? FindPassenger(string id)
+    public Flight? FindFlight(string id)
     {
         try
         {
-            return (from passenger in GetPassengers() 
-                where passenger.PassengerId.Equals(Guid.Parse(id)) 
+            return (from passenger in GetFlights() 
+                where passenger.FlightId.Equals(Guid.Parse(id)) 
                 select passenger).Single();
         }
         catch (Exception e)
@@ -43,21 +44,21 @@ public sealed class PassengerFileReader : FileReader, IPassengerDatabase
         return null;
     }
     
-    public IEnumerable<Passenger> GetPassengers()
+    public IEnumerable<Flight> GetFlights()
     {
         try
         {
             return (from record in ReadFileRecords() 
-                select PassengerHandler.CreatePassenger(record)).ToList();
+                select FlightHandler.CreateFlight(record)).ToList();
         }
         catch (Exception e)
         {
             Console.WriteLine("The CSV file format is inconsistent.");
         }
-        return new List<Passenger>();
+        return new List<Flight>();
     }
-
-    public void UpdatePassenger(Passenger passenger)
+    
+    public void UpdateFlights(Flight flight)
     {
         try
         {
@@ -65,21 +66,21 @@ public sealed class PassengerFileReader : FileReader, IPassengerDatabase
             var isFound = false;
             for (var i = 0; i < records.Count; i++)
             {
-                if (!records[i][0].Equals(passenger.PassengerId.ToString())) continue;
-                records[i] = PassengerHandler.GetAttributesFromPassenger(passenger);
+                if (!records[i][0].Equals(flight.FlightId.ToString())) continue;
+                records[i] = FlightHandler.GetAttributesFromFlight(flight);
                 isFound = true;
                 break;
             }
             if(isFound) WriteToFile(records);
-            else Console.WriteLine("Passenger with the given ID doesn't exist.");
+            else Console.WriteLine("Flight with the given ID doesn't exist.");
         }
         catch (Exception e)
         {
-            Console.WriteLine("An error occurred while updating the passenger");
+            Console.WriteLine("An error occurred while updating the flight");
         }
     }
-
-    public void DeletePassenger(string id)
+    
+    public void DeleteFlight(string id)
     {
         try
         {
@@ -88,14 +89,14 @@ public sealed class PassengerFileReader : FileReader, IPassengerDatabase
         }
         catch (Exception e)
         {
-            Console.WriteLine("An error occurred while deleting the passenger, so the passenger was not removed.");
+            Console.WriteLine("An error occurred while deleting the flight, so the flight was not removed.");
         }
     }
-
+    
     protected override string GetFilePath()
     {
         var parentPath = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.ToString();
-        var filePath = $"{parentPath}/CsvData/Passengers.csv";
+        var filePath = $"{parentPath}/CsvData/Flights.csv";
         if (parentPath == null || !File.Exists(filePath)) throw new FileNotFoundException("Invalid File Path");
         return filePath;
     }

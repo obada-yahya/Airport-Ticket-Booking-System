@@ -1,8 +1,8 @@
 ﻿using AirportTicketBookingDomain;
 
-namespace AirportTicketBooking.DataLayer;
+namespace AirportTicketBooking.Repositories.FlightRepositories;
 
-public interface IFlightDatabase
+public interface IFlightRepository
 {
     public void AddFlight(Flight flight);
     public Flight? FindFlight(string id);

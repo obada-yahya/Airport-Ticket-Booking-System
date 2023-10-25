@@ -1,6 +1,6 @@
 ﻿using AirportTicketBookingDomain;
 
-namespace AirportTicketBooking.DataLayer;
+namespace AirportTicketBooking.Repositories.PassengerRepositories;
 
 public interface IPassengerDatabase
 {
