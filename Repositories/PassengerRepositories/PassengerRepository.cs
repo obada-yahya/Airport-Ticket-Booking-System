@@ -90,12 +90,4 @@ public class PassengerRepository : IPassengerRepository
             Console.WriteLine("An error occurred while deleting the passenger, so the passenger was not removed.");
         }
     }
-
-    protected  string GetFilePath()
-    {
-        var parentPath = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.ToString();
-        var filePath = $"{parentPath}/CsvData/Passengers.csv";
-        if (parentPath == null || !File.Exists(filePath)) throw new FileNotFoundException("Invalid File Path");
-        return filePath;
-    }
 }

@@ -90,12 +90,4 @@ public class FlightRepository : IFlightRepository
             Console.WriteLine("An error occurred while deleting the flight, so the flight was not removed.");
         }
     }
-    
-    protected string GetFilePath()
-    {
-        var parentPath = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.ToString();
-        var filePath = $"{parentPath}/CsvData/Flights.csv";
-        if (parentPath == null || !File.Exists(filePath)) throw new FileNotFoundException("Invalid File Path");
-        return filePath;
-    }
 }
