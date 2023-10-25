@@ -4,24 +4,22 @@ using AirportTicketBookingDomain;
 
 namespace AirportTicketBooking.Repositories.FlightRepositories;
 
-public sealed class FlightFileReader : FileReader, IFlightRepository
+public class FlightRepository : IFlightRepository
 {
-    private static FlightFileReader? _instance;
-
-    public static FlightFileReader Instance
-    {
-        get { return _instance ??= new FlightFileReader(); }
-    }
+    private readonly IDataSource _dataSource; 
     
-    private FlightFileReader(){}
+    public FlightRepository(IDataSource dataSource)
+    {
+        _dataSource = dataSource;
+    }
 
     public void AddFlight(Flight flight)
     {
         try
         {
-            var records = ReadFileRecords().ToList();
+            var records = _dataSource.GetRecordsFromDataSource().ToList();
             records.Add(FlightHandler.GetAttributesFromFlight(flight));
-            WriteToFile(records);
+            _dataSource.WriteToDataSource(records);
         }
         catch (Exception e)
         {
@@ -48,7 +46,7 @@ public sealed class FlightFileReader : FileReader, IFlightRepository
     {
         try
         {
-            return (from record in ReadFileRecords() 
+            return (from record in _dataSource.GetRecordsFromDataSource() 
                 select FlightHandler.CreateFlight(record)).ToList();
         }
         catch (Exception e)
@@ -62,7 +60,7 @@ public sealed class FlightFileReader : FileReader, IFlightRepository
     {
         try
         {
-            var records = ReadFileRecords().ToList();
+            var records = _dataSource.GetRecordsFromDataSource().ToList();
             var isFound = false;
             for (var i = 0; i < records.Count; i++)
             {
@@ -71,7 +69,7 @@ public sealed class FlightFileReader : FileReader, IFlightRepository
                 isFound = true;
                 break;
             }
-            if(isFound) WriteToFile(records);
+            if(isFound) _dataSource.WriteToDataSource(records);
             else Console.WriteLine("Flight with the given ID doesn't exist.");
         }
         catch (Exception e)
@@ -84,8 +82,8 @@ public sealed class FlightFileReader : FileReader, IFlightRepository
     {
         try
         {
-            var records = ReadFileRecords().ToList();
-            WriteToFile(from record in records where !record[0].Equals(id) select record);
+            var records = _dataSource.GetRecordsFromDataSource().ToList();
+            _dataSource.WriteToDataSource(from record in records where !record[0].Equals(id) select record);
         }
         catch (Exception e)
         {
@@ -93,7 +91,7 @@ public sealed class FlightFileReader : FileReader, IFlightRepository
         }
     }
     
-    protected override string GetFilePath()
+    protected string GetFilePath()
     {
         var parentPath = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.ToString();
         var filePath = $"{parentPath}/CsvData/Flights.csv";

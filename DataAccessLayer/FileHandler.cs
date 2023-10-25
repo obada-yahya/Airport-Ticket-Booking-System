@@ -1,15 +1,13 @@
 ﻿namespace AirportTicketBooking.DataAccessLayer;
 
-public abstract class FileReader
+public class FileHandler : IDataSource
 {
     private readonly string _filePath;
 
-    protected FileReader()
+    protected FileHandler(string filePath)
     {
-        _filePath = GetFilePath();
+        _filePath = filePath;
     }
-
-    protected abstract string GetFilePath();
     
     private string[] GetCsvFileHeaders()
     {
@@ -18,8 +16,8 @@ public abstract class FileReader
         if (line is null) throw new Exception("An issue occurred while reading the CSV file");
         return line.Split(",");
     }
-    
-    protected IEnumerable<string[]> ReadFileRecords()
+
+    public IEnumerable<string[]> GetRecordsFromDataSource()
     {
         using var reader = new StreamReader(_filePath);
         var isHeader = true;
@@ -35,8 +33,8 @@ public abstract class FileReader
             yield return (from value in line.Split(",") select value.Trim()).ToArray();
         }
     }
-    
-    protected void WriteToFile(IEnumerable<string[]> records)
+
+    public void WriteToDataSource(IEnumerable<string[]> records)
     {
         var headers = GetCsvFileHeaders();
         using var streamWriter = new StreamWriter(_filePath);

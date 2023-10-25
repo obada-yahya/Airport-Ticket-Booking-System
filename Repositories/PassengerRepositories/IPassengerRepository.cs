@@ -2,7 +2,7 @@
 
 namespace AirportTicketBooking.Repositories.PassengerRepositories;
 
-public interface IPassengerDatabase
+public interface IPassengerRepository
 {
     public void AddPassenger(Passenger passenger);
     public Passenger? FindPassenger(string id);

@@ -4,24 +4,22 @@ using AirportTicketBookingDomain;
 
 namespace AirportTicketBooking.Repositories.PassengerRepositories;
 
-public sealed class PassengerFileReader : FileReader, IPassengerDatabase
+public class PassengerRepository : IPassengerRepository
 {
-    private static PassengerFileReader? _instance;
-
-    public static PassengerFileReader Instance
-    {
-        get { return _instance ??= new PassengerFileReader(); }
+    private readonly IDataSource _dataSource; 
+    
+    public PassengerRepository(IDataSource dataSource)
+    { 
+        _dataSource = dataSource;
     }
-
-    private PassengerFileReader() {}
 
     public void AddPassenger(Passenger passenger)
     {
         try
         {
-            var records = ReadFileRecords().ToList();
+            var records = _dataSource.GetRecordsFromDataSource().ToList();
             records.Add(PassengerHandler.GetAttributesFromPassenger(passenger));
-            WriteToFile(records);
+            _dataSource.WriteToDataSource(records);
         }
         catch (Exception e)
         {
@@ -48,7 +46,7 @@ public sealed class PassengerFileReader : FileReader, IPassengerDatabase
     {
         try
         {
-            return (from record in ReadFileRecords() 
+            return (from record in _dataSource.GetRecordsFromDataSource() 
                 select PassengerHandler.CreatePassenger(record)).ToList();
         }
         catch (Exception e)
@@ -62,7 +60,7 @@ public sealed class PassengerFileReader : FileReader, IPassengerDatabase
     {
         try
         {
-            var records = ReadFileRecords().ToList();
+            var records = _dataSource.GetRecordsFromDataSource().ToList();
             var isFound = false;
             for (var i = 0; i < records.Count; i++)
             {
@@ -71,7 +69,7 @@ public sealed class PassengerFileReader : FileReader, IPassengerDatabase
                 isFound = true;
                 break;
             }
-            if(isFound) WriteToFile(records);
+            if(isFound) _dataSource.WriteToDataSource(records);
             else Console.WriteLine("Passenger with the given ID doesn't exist.");
         }
         catch (Exception e)
@@ -84,8 +82,8 @@ public sealed class PassengerFileReader : FileReader, IPassengerDatabase
     {
         try
         {
-            var records = ReadFileRecords().ToList();
-            WriteToFile(from record in records where !record[0].Equals(id) select record);
+            var records = _dataSource.GetRecordsFromDataSource().ToList();
+            _dataSource.WriteToDataSource(from record in records where !record[0].Equals(id) select record);
         }
         catch (Exception e)
         {
@@ -93,7 +91,7 @@ public sealed class PassengerFileReader : FileReader, IPassengerDatabase
         }
     }
 
-    protected override string GetFilePath()
+    protected  string GetFilePath()
     {
         var parentPath = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.ToString();
         var filePath = $"{parentPath}/CsvData/Passengers.csv";
