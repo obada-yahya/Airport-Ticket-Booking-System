@@ -4,7 +4,7 @@ public class FileHandler : IDataSource
 {
     private readonly string _filePath;
 
-    private FileHandler(string filePath)
+    public FileHandler(string filePath)
     {
         _filePath = filePath;
     }

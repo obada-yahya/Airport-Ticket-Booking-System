@@ -2,38 +2,38 @@
 using AirportTicketBooking.Utils;
 using AirportTicketBookingDomain;
 
-namespace AirportTicketBooking.Repositories.FlightRepositories;
+namespace AirportTicketBooking.Repositories.TicketRepositories;
 
-public class FlightRepository : IFlightRepository
+public class TicketRepository : ITicketRepository
 {
     private readonly IDataSource _dataSource; 
     
-    public FlightRepository(IDataSource dataSource)
-    {
+    public TicketRepository(IDataSource dataSource)
+    { 
         _dataSource = dataSource;
     }
-
-    public void AddFlight(Flight flight)
+    
+    public void AddTicket(Ticket ticket)
     {
         try
         {
             var records = _dataSource.GetRecordsFromDataSource().ToList();
-            records.Add(FlightHandler.GetAttributesFromFlight(flight));
+            records.Add(TicketHandler.GetAttributesFromTicket(ticket));
             _dataSource.WriteToDataSource(records);
         }
         catch (Exception e)
         {
-            Console.WriteLine("An error occurred while adding the flight, so the flight was not added.");
+            Console.WriteLine("An error occurred while adding the ticket, so the ticket was not added.");
         }
     }
-    
-    public Flight? FindFlight(string id)
+
+    public Ticket? FindTicket(string id)
     {
         try
         {
-            return (from passenger in GetFlights() 
-                where passenger.FlightId.Equals(Guid.Parse(id)) 
-                select passenger).Single();
+            return (from ticket in GetTickets() 
+                where ticket.TicketId.Equals(Guid.Parse(id)) 
+                select ticket).Single();
         }
         catch (Exception e)
         {
@@ -41,22 +41,22 @@ public class FlightRepository : IFlightRepository
         }
         return null;
     }
-    
-    public IEnumerable<Flight> GetFlights()
+
+    public IEnumerable<Ticket> GetTickets()
     {
         try
         {
             return (from record in _dataSource.GetRecordsFromDataSource() 
-                select FlightHandler.CreateFlight(record)).ToList();
+                select TicketHandler.CreateTicket(record)).ToList();
         }
         catch (Exception e)
         {
             Console.WriteLine("The CSV file format is inconsistent.");
         }
-        return new List<Flight>();
+        return new List<Ticket>();
     }
-    
-    public void UpdateFlight(Flight flight)
+
+    public void UpdateTicket(Ticket ticket)
     {
         try
         {
@@ -64,21 +64,21 @@ public class FlightRepository : IFlightRepository
             var isFound = false;
             for (var i = 0; i < records.Count; i++)
             {
-                if (!records[i][0].Equals(flight.FlightId.ToString())) continue;
-                records[i] = FlightHandler.GetAttributesFromFlight(flight);
+                if (!records[i][0].Equals(ticket.PassengerId.ToString())) continue;
+                records[i] = TicketHandler.GetAttributesFromTicket(ticket);
                 isFound = true;
                 break;
             }
             if(isFound) _dataSource.WriteToDataSource(records);
-            else Console.WriteLine("Flight with the given ID doesn't exist.");
+            else Console.WriteLine("Ticket with the given ID doesn't exist.");
         }
         catch (Exception e)
         {
-            Console.WriteLine("An error occurred while updating the flight");
+            Console.WriteLine("An error occurred while updating the ticket");
         }
     }
-    
-    public void DeleteFlight(string id)
+
+    public void DeleteTicket(string id)
     {
         try
         {
@@ -87,7 +87,7 @@ public class FlightRepository : IFlightRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine("An error occurred while deleting the flight, so the flight was not removed.");
+            Console.WriteLine("An error occurred while deleting the ticket, so the ticket was not removed.");
         }
     }
 }
