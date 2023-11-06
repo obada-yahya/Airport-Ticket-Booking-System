@@ -6,7 +6,7 @@ public static class CabinHandler
 {
     public static Cabin CreateFlightCabin(IReadOnlyList<string> attributes)
     {
-        Enum.TryParse(attributes[1],out CabinClass cabinClass);
+        Enum.TryParse(attributes[1], out CabinClass cabinClass);
         return new Cabin()
         {
             CabinId = Guid.Parse(attributes[0]),
@@ -25,5 +25,10 @@ public static class CabinHandler
             cabin.Price.ToString(),
             cabin.FlightId.ToString()
         };
+    }
+
+    public static Dictionary<CabinClass, float> GetCabinsPrices(IEnumerable<Cabin> cabins)
+    {
+        return cabins.ToDictionary(cabin => cabin.CabinName, cabin => cabin.Price);
     }
 }

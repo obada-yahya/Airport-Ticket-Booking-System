@@ -1,4 +1,5 @@
 ﻿using AirportTicketBooking.DataAccessLayer;
+using AirportTicketBooking.Repositories.CabinRepositories;
 using AirportTicketBooking.Utils;
 using AirportTicketBookingDomain;
 
@@ -6,11 +7,13 @@ namespace AirportTicketBooking.Repositories.FlightRepositories;
 
 public class FlightRepository : IFlightRepository
 {
-    private readonly IDataSource _dataSource; 
+    private readonly IDataSource _dataSource;
+    private readonly ICabinRepository _cabinRepository;
     
-    public FlightRepository(IDataSource dataSource)
+    public FlightRepository(IDataSource dataSource, ICabinRepository cabinRepository)
     {
         _dataSource = dataSource;
+        _cabinRepository = cabinRepository;
     }
 
     public void AddFlight(Flight flight)
@@ -31,9 +34,10 @@ public class FlightRepository : IFlightRepository
     {
         try
         {
-            return (from passenger in GetFlights() 
-                where passenger.FlightId.Equals(Guid.Parse(id)) 
-                select passenger).Single();
+            return (from flight in GetFlights() 
+                where flight.FlightId.Equals(Guid.Parse(id)) 
+                select flight).Single();
+            
         }
         catch (Exception e)
         {
@@ -46,8 +50,13 @@ public class FlightRepository : IFlightRepository
     {
         try
         {
-            return (from record in _dataSource.GetRecordsFromDataSource() 
-                select FlightHandler.CreateFlight(record)).ToList();
+            return _dataSource.GetRecordsFromDataSource()
+                .Select(FlightHandler.CreateFlight)
+                .Select(flight =>
+                {
+                    flight.CabinPrices = _cabinRepository.GetFlightCabins(flight.FlightId.ToString());
+                    return flight;
+                });
         }
         catch (Exception e)
         {
@@ -84,6 +93,7 @@ public class FlightRepository : IFlightRepository
         {
             var records = _dataSource.GetRecordsFromDataSource().ToList();
             _dataSource.WriteToDataSource(from record in records where !record[0].Equals(id) select record);
+            _cabinRepository.DeleteFlightCabins(id);
         }
         catch (Exception e)
         {

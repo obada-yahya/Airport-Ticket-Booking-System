@@ -31,9 +31,9 @@ public class CabinRepository : ICabinRepository
     {
         try
         {
-            return (from passenger in GetCabins() 
-                where passenger.FlightId.Equals(Guid.Parse(id)) 
-                select passenger).Single();
+            return (from cabin in GetCabins() 
+                where cabin.CabinId.Equals(Guid.Parse(id)) 
+                select cabin).Single();
         }
         catch (Exception e)
         {
@@ -51,6 +51,7 @@ public class CabinRepository : ICabinRepository
         }
         catch (Exception e)
         {
+            Console.WriteLine(e.Message);
             Console.WriteLine("The CSV file format is inconsistent.");
         }
         return new List<Cabin>();
@@ -88,6 +89,35 @@ public class CabinRepository : ICabinRepository
         catch (Exception e)
         {
             Console.WriteLine("An error occurred while deleting the cabin, so the cabin was not removed.");
+        }
+    }
+
+    public Dictionary<CabinClass, float> GetFlightCabins(string flightId)
+    {
+        try
+        {
+            var cabins = (from cabin in GetCabins() 
+                where cabin.FlightId.Equals(Guid.Parse(flightId)) 
+                select cabin);
+            return CabinHandler.GetCabinsPrices(cabins);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        return new Dictionary<CabinClass, float>();
+    }
+
+    public void DeleteFlightCabins(string flightId)
+    {
+        try
+        {
+            var records = _dataSource.GetRecordsFromDataSource().ToList();
+            _dataSource.WriteToDataSource(from record in records where !record[3].Equals(flightId) select record);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("An error occurred while deleting the Flight cabins, so the cabins was not removed.");
         }
     }
 }
