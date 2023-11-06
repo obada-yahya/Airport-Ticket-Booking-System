@@ -2,31 +2,17 @@
 
 public static class FilesPaths
 {
-    public static readonly string FlightFilePath = GetFlightFilePath();
-    public static readonly string PassengerFilePath = GetPassengerFilePath();
-    public static readonly string TicketFilePath = GetTicketFilePath();
-
-    private static string GetPassengerFilePath()
-    {
-        var parentPath = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.ToString();
-        var filePath = $@"{parentPath}\Seeds\Passengers.csv";
-        if (parentPath == null || !File.Exists(filePath)) throw new FileNotFoundException("Invalid File Path");
-        return filePath;
-    }
+    public static readonly string FlightFilePath = GetFilePath("Flights");
+    public static readonly string PassengerFilePath = GetFilePath("Passengers");
+    public static readonly string TicketFilePath = GetFilePath("Tickets");
+    public static readonly string CabinFilePath = GetFilePath("Cabins");
     
-    private static string GetFlightFilePath()
+    private static string GetFilePath(string fileName)
     {
         var parentPath = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.ToString();
-        var filePath = $@"{parentPath}\Seeds\Flights.csv";
-        if (parentPath == null || !File.Exists(filePath)) throw new FileNotFoundException("Invalid File Path");
-        return filePath;
-    }
-    
-    private static string GetTicketFilePath()
-    {
-        var parentPath = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.ToString();
-        var filePath = $@"{parentPath}\Seeds\Tickets.csv";
-        if (parentPath == null || !File.Exists(filePath)) throw new FileNotFoundException("Invalid File Path");
+        var filePath = $@"{parentPath}\Seeds\{fileName}.csv";
+        if (parentPath == null || !File.Exists(filePath)) 
+            throw new FileNotFoundException($"Invalid File Path for {fileName} seed");
         return filePath;
     }
 }
