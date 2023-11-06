@@ -6,7 +6,7 @@ namespace AirportTicketBooking.Repositories.CabinRepositories;
 
 public class CabinRepository : ICabinRepository
 {
-     private readonly IDataSource _dataSource; 
+    private readonly IDataSource _dataSource; 
     
     public CabinRepository(IDataSource dataSource)
     {

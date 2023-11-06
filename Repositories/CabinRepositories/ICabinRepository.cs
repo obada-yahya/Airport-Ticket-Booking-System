@@ -9,7 +9,6 @@ public interface ICabinRepository
     public IEnumerable<Cabin> GetCabins();
     public void UpdateCabin(Cabin cabin);
     public void DeleteCabin(string id);
-
     public Dictionary<CabinClass, float> GetFlightCabins(string flightId);
     public void DeleteFlightCabins(string flightId);
 }

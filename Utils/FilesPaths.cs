@@ -6,6 +6,7 @@ public static class FilesPaths
     public static readonly string PassengerFilePath = GetFilePath("Passengers");
     public static readonly string TicketFilePath = GetFilePath("Tickets");
     public static readonly string CabinFilePath = GetFilePath("Cabins");
+    public static readonly string FlightManagerFilePath = GetFilePath("FlightManagers");
     
     private static string GetFilePath(string fileName)
     {

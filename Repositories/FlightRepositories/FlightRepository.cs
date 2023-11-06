@@ -83,7 +83,7 @@ public class FlightRepository : IFlightRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine("An error occurred while updating the flight");
+            Console.WriteLine("An error occurred while updating the flight.");
         }
     }
     
