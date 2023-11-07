@@ -9,7 +9,7 @@ public static class FlightHandler
         return new Flight()
         {
             FlightId= Guid.Parse(attributes[0]),
-            FlightManagerId = Guid.Parse(attributes[1]),
+            FlightManagerId = attributes[1].Equals(string.Empty) ? null: Guid.Parse(attributes[1]) ,
             Name = attributes[2],
             DepartureCountry = attributes[3],
             DepartureAirport = attributes[4],

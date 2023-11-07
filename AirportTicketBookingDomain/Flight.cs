@@ -4,7 +4,7 @@
 public class Flight
 {
     public Guid FlightId { get; set; }
-    public Guid FlightManagerId { get; set; }
+    public Guid? FlightManagerId { get; set; }
     public string Name { get; set; }
     public string DepartureCountry {get; set; }
     public string DepartureAirport { get; set; }

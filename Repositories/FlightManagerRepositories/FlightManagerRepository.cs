@@ -1,4 +1,5 @@
 ﻿using AirportTicketBooking.DataAccessLayer;
+using AirportTicketBooking.Repositories.FlightRepositories;
 using AirportTicketBooking.Utils;
 using AirportTicketBookingDomain;
 
@@ -7,10 +8,12 @@ namespace AirportTicketBooking.Repositories.FlightManagerRepositories;
 public class FlightManagerRepository : IFlightManagerRepository
 {
     private readonly IDataSource _dataSource;
+    private readonly IFlightRepository _flightRepository;
 
-    public FlightManagerRepository(IDataSource dataSource)
+    public FlightManagerRepository(IDataSource dataSource, IFlightRepository flightRepository)
     {
         _dataSource = dataSource;
+        _flightRepository = flightRepository;
     }
 
     public void AddFlightManager(FlightManager flightManager)
@@ -48,7 +51,13 @@ public class FlightManagerRepository : IFlightManagerRepository
         try
         {
             return _dataSource.GetRecordsFromDataSource()
-                .Select(FlightManagerHandler.CreateFlightManager);
+                .Select(FlightManagerHandler.CreateFlightManager)
+                .Select(flightManager =>
+                {
+                    flightManager.FlightsManaged = _flightRepository
+                        .GetManagedFlightByManager(flightManager.FlightManagerId.ToString());
+                    return flightManager;
+                });
         }
         catch (Exception e)
         {
@@ -85,6 +94,7 @@ public class FlightManagerRepository : IFlightManagerRepository
         {
             var records = _dataSource.GetRecordsFromDataSource().ToList();
             _dataSource.WriteToDataSource(from record in records where !record[0].Equals(id) select record);
+            _flightRepository.UnassignManagerFromFlights(id);
         }
         catch (Exception e)
         {

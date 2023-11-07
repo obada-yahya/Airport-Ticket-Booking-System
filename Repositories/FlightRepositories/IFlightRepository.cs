@@ -9,4 +9,6 @@ public interface IFlightRepository
     public IEnumerable<Flight> GetFlights();
     public void UpdateFlight(Flight flight);
     public void DeleteFlight(string id);
+    public IEnumerable<Flight> GetManagedFlightByManager(string flightManagerId);
+    public void UnassignManagerFromFlights(string flightManagerId);
 }

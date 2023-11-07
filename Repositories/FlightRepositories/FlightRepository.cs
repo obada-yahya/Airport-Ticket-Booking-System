@@ -100,4 +100,26 @@ public class FlightRepository : IFlightRepository
             Console.WriteLine("An error occurred while deleting the flight, so the flight was not removed.");
         }
     }
+
+    public IEnumerable<Flight> GetManagedFlightByManager(string flightManagerId)
+    {
+        return (from flight in GetFlights() where flight.FlightManagerId.ToString().Equals(flightManagerId) select flight);
+    }
+
+    public void UnassignManagerFromFlights(string managerId)
+    {
+        try
+        {
+            var records = _dataSource.GetRecordsFromDataSource().ToList();
+            foreach (var record in records.Where(record => record[1].Equals(managerId)))
+            {
+                record[1] = string.Empty;
+            }
+            _dataSource.WriteToDataSource(records);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("An error occurred while Unassign the FlightManager from the flights, so the flights was not removed.");
+        }
+    }
 }
