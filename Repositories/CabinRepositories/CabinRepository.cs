@@ -7,6 +7,7 @@ namespace AirportTicketBooking.Repositories.CabinRepositories;
 public class CabinRepository : ICabinRepository
 {
     private readonly IDataSource _dataSource; 
+    private const int CabinIdColumn = 0;
     
     public CabinRepository(IDataSource dataSource)
     {
@@ -65,7 +66,7 @@ public class CabinRepository : ICabinRepository
             var isFound = false;
             for (var i = 0; i < records.Count; i++)
             {
-                if (!records[i][0].Equals(cabin.CabinId.ToString())) continue;
+                if (!records[i][CabinIdColumn].Equals(cabin.CabinId.ToString())) continue;
                 records[i] = CabinHandler.GetAttributesFromFlightCabin(cabin);
                 isFound = true;
                 break;
@@ -84,7 +85,7 @@ public class CabinRepository : ICabinRepository
         try
         {
             var records = _dataSource.GetRecordsFromDataSource().ToList();
-            _dataSource.WriteToDataSource(from record in records where !record[0].Equals(id) select record);
+            _dataSource.WriteToDataSource(from record in records where !record[CabinIdColumn].Equals(id) select record);
         }
         catch (Exception e)
         {
@@ -112,8 +113,9 @@ public class CabinRepository : ICabinRepository
     {
         try
         {
+            const int flightIdColumn = 3;
             var records = _dataSource.GetRecordsFromDataSource().ToList();
-            _dataSource.WriteToDataSource(from record in records where !record[3].Equals(flightId) select record);
+            _dataSource.WriteToDataSource(from record in records where !record[flightIdColumn].Equals(flightId) select record);
         }
         catch (Exception e)
         {

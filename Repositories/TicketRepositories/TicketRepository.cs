@@ -7,6 +7,7 @@ namespace AirportTicketBooking.Repositories.TicketRepositories;
 public class TicketRepository : ITicketRepository
 {
     private readonly IDataSource _dataSource; 
+    private const int TicketIdColumn = 0;
     
     public TicketRepository(IDataSource dataSource)
     { 
@@ -64,7 +65,7 @@ public class TicketRepository : ITicketRepository
             var isFound = false;
             for (var i = 0; i < records.Count; i++)
             {
-                if (!records[i][0].Equals(ticket.PassengerId.ToString())) continue;
+                if (!records[i][TicketIdColumn].Equals(ticket.PassengerId.ToString())) continue;
                 records[i] = TicketHandler.GetAttributesFromTicket(ticket);
                 isFound = true;
                 break;
@@ -83,7 +84,7 @@ public class TicketRepository : ITicketRepository
         try
         {
             var records = _dataSource.GetRecordsFromDataSource().ToList();
-            _dataSource.WriteToDataSource(from record in records where !record[0].Equals(id) select record);
+            _dataSource.WriteToDataSource(from record in records where !record[TicketIdColumn].Equals(id) select record);
         }
         catch (Exception e)
         {

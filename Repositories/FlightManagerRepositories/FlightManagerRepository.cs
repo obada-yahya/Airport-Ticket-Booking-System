@@ -9,6 +9,7 @@ public class FlightManagerRepository : IFlightManagerRepository
 {
     private readonly IDataSource _dataSource;
     private readonly IFlightRepository _flightRepository;
+    private const int FlightManagerIdColumn = 0;
 
     public FlightManagerRepository(IDataSource dataSource, IFlightRepository flightRepository)
     {
@@ -74,7 +75,7 @@ public class FlightManagerRepository : IFlightManagerRepository
             var isFound = false;
             for (var i = 0; i < records.Count; i++)
             {
-                if (!records[i][0].Equals(flightManager.FlightManagerId.ToString())) continue;
+                if (!records[i][FlightManagerIdColumn].Equals(flightManager.FlightManagerId.ToString())) continue;
                 records[i] = FlightManagerHandler.GetAttributesFromFlightManager(flightManager);
                 isFound = true;
                 break;
@@ -92,8 +93,9 @@ public class FlightManagerRepository : IFlightManagerRepository
     {
         try
         {
+            
             var records = _dataSource.GetRecordsFromDataSource().ToList();
-            _dataSource.WriteToDataSource(from record in records where !record[0].Equals(id) select record);
+            _dataSource.WriteToDataSource(from record in records where !record[FlightManagerIdColumn].Equals(id) select record);
             _flightRepository.UnassignManagerFromFlights(id);
         }
         catch (Exception e)

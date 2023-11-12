@@ -9,6 +9,7 @@ public class FlightRepository : IFlightRepository
 {
     private readonly IDataSource _dataSource;
     private readonly ICabinRepository _cabinRepository;
+    private const int FlightIdColumn = 0;
     
     public FlightRepository(IDataSource dataSource, ICabinRepository cabinRepository)
     {
@@ -73,7 +74,7 @@ public class FlightRepository : IFlightRepository
             var isFound = false;
             for (var i = 0; i < records.Count; i++)
             {
-                if (!records[i][0].Equals(flight.FlightId.ToString())) continue;
+                if (!records[i][FlightIdColumn].Equals(flight.FlightId.ToString())) continue;
                 records[i] = FlightHandler.GetAttributesFromFlight(flight);
                 isFound = true;
                 break;
@@ -92,7 +93,7 @@ public class FlightRepository : IFlightRepository
         try
         {
             var records = _dataSource.GetRecordsFromDataSource().ToList();
-            _dataSource.WriteToDataSource(from record in records where !record[0].Equals(id) select record);
+            _dataSource.WriteToDataSource(from record in records where !record[FlightIdColumn].Equals(id) select record);
             _cabinRepository.DeleteFlightCabins(id);
         }
         catch (Exception e)
@@ -110,10 +111,11 @@ public class FlightRepository : IFlightRepository
     {
         try
         {
+            const int flightManagerIdColumn = 1;
             var records = _dataSource.GetRecordsFromDataSource().ToList();
-            foreach (var record in records.Where(record => record[1].Equals(managerId)))
+            foreach (var record in records.Where(record => record[flightManagerIdColumn].Equals(managerId)))
             {
-                record[1] = string.Empty;
+                record[flightManagerIdColumn] = string.Empty;
             }
             _dataSource.WriteToDataSource(records);
         }
