@@ -8,5 +8,6 @@ public interface ITicketRepository
     public Ticket? FindTicket(string id);
     public IEnumerable<Ticket> GetTickets();
     public void UpdateTicket(Ticket ticket);
-    public void DeleteTicket(string id);
+    public (Guid, float)? ReleaseTicketRefund(string id);
+    public IEnumerable<(Guid, float)> CancelAllTicketsForFlight(string flightId);
 }

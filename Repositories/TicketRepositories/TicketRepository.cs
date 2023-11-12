@@ -79,16 +79,68 @@ public class TicketRepository : ITicketRepository
         }
     }
 
-    public void DeleteTicket(string id)
+    public (Guid, float)? ReleaseTicketRefund(string id)
     {
+        const int passengerIdColumn = 2;
+        const int ticketPriceColumn = 3;
+        const int ticketStatusColumn = 4;
         try
         {
             var records = _dataSource.GetRecordsFromDataSource().ToList();
-            _dataSource.WriteToDataSource(from record in records where !record[TicketIdColumn].Equals(id) select record);
+            var ticket = records.SingleOrDefault(record => record[TicketIdColumn].Equals(id));
+            if (ticket is null)
+            {
+                Console.WriteLine("Ticket with the given ID doesn't exist.");
+                return null;
+            }
+
+            Enum.TryParse<TicketStatus>(ticket[ticketStatusColumn], true, out var ticketStatus);
+
+            if (!ticketStatus.Equals(TicketStatus.Booked))
+                throw new InvalidOperationException("Ticket Status is Not Booked.");
+
+            ticket[ticketStatusColumn] = TicketStatus.Available.ToString();
+            var result = (Guid.Parse(ticket[passengerIdColumn]), float.Parse(ticket[ticketPriceColumn]));
+            ticket[passengerIdColumn] = string.Empty;
+            _dataSource.WriteToDataSource(records);
+            return result;
+        }
+        catch (InvalidOperationException e)
+        {
+            Console.WriteLine(e.Message);
         }
         catch (Exception e)
         {
-            Console.WriteLine("An error occurred while deleting the ticket, so the ticket was not removed.");
+            Console.WriteLine("An error occurred while Releasing the ticket, so the ticket was not removed.");
         }
+        return null;
+    }
+
+    public IEnumerable<(Guid, float)> CancelAllTicketsForFlight(string flightId)
+    {
+        var result = new List<(Guid,float)>();
+        const int flightIdColumn = 1;
+        const int passengerIdColumn = 2;
+        const int ticketPriceColumn = 3;
+        const int ticketStatusColumn = 4;
+        try
+        {
+            var records = _dataSource.GetRecordsFromDataSource().ToList();
+            var tickets = records.Where(record => record[flightIdColumn].Equals(flightId));
+            foreach (var ticket in tickets)
+            {
+                Enum.TryParse<TicketStatus>(ticket[ticketStatusColumn], true, out var ticketStatus);
+                if (ticketStatus.Equals(TicketStatus.Cancelled)) continue;
+                ticket[ticketStatusColumn] = TicketStatus.Cancelled.ToString();
+                result.Add((Guid.Parse(ticket[passengerIdColumn]), float.Parse(ticket[ticketPriceColumn])));
+                _dataSource.WriteToDataSource(records);
+            }
+            return result;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("An error occurred while Canceling the flight tickets, so the tickets was not removed.");
+        }
+        return result;
     }
 }
