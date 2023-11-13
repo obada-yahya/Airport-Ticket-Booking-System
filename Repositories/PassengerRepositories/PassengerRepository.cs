@@ -1,4 +1,5 @@
-﻿using AirportTicketBooking.DataAccessLayer;
+﻿using System.Globalization;
+using AirportTicketBooking.DataAccessLayer;
 using AirportTicketBooking.Utils;
 using AirportTicketBookingDomain;
 
@@ -89,6 +90,36 @@ public class PassengerRepository : IPassengerRepository
         catch (Exception e)
         {
             Console.WriteLine("An error occurred while deleting the passenger, so the passenger was not removed.");
+        }
+    }
+
+    public void ApplyPassengerRefunds(IEnumerable<(Guid, float)> passengerRefunds)
+    {
+        const int accountBalanceColumn = 3;
+        var passengerRefundsDictionary = new Dictionary<Guid, float>();
+        try
+        {
+            foreach (var passengerRefund in passengerRefunds)
+            {
+                if (passengerRefundsDictionary.ContainsKey(passengerRefund.Item1))
+                    passengerRefundsDictionary[passengerRefund.Item1] += passengerRefund.Item2;
+                else passengerRefundsDictionary.Add(passengerRefund.Item1, passengerRefund.Item2);
+            }
+            var records = _dataSource.GetRecordsFromDataSource().ToList();
+            foreach (var record in records)
+            {
+                var passengerId = Guid.Parse(record[PassengerIdColumn]);
+                if (passengerRefundsDictionary.TryGetValue(passengerId, out var refund))
+                {
+                    record[accountBalanceColumn] = (float.Parse(record[accountBalanceColumn]) + refund)
+                        .ToString(CultureInfo.CurrentCulture);
+                }
+            }
+            _dataSource.WriteToDataSource(records);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
         }
     }
 }

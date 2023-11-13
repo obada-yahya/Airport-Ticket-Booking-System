@@ -1,5 +1,7 @@
 ﻿using AirportTicketBooking.DataAccessLayer;
 using AirportTicketBooking.Repositories.CabinRepositories;
+using AirportTicketBooking.Repositories.PassengerRepositories;
+using AirportTicketBooking.Repositories.TicketRepositories;
 using AirportTicketBooking.Utils;
 using AirportTicketBookingDomain;
 
@@ -9,12 +11,16 @@ public class FlightRepository : IFlightRepository
 {
     private readonly IDataSource _dataSource;
     private readonly ICabinRepository _cabinRepository;
+    private readonly ITicketRepository _ticketRepository;
+    private readonly IPassengerRepository _passengerRepository;
     private const int FlightIdColumn = 0;
     
-    public FlightRepository(IDataSource dataSource, ICabinRepository cabinRepository)
+    public FlightRepository(IDataSource dataSource, ICabinRepository cabinRepository, ITicketRepository ticketRepository, IPassengerRepository passengerRepository)
     {
         _dataSource = dataSource;
         _cabinRepository = cabinRepository;
+        _ticketRepository = ticketRepository;
+        _passengerRepository = passengerRepository;
     }
 
     public void AddFlight(Flight flight)
@@ -90,11 +96,21 @@ public class FlightRepository : IFlightRepository
     
     public void DeleteFlight(string id)
     {
+        const int isDeleteColumn = 10;
         try
         {
             var records = _dataSource.GetRecordsFromDataSource().ToList();
-            _dataSource.WriteToDataSource(from record in records where !record[FlightIdColumn].Equals(id) select record);
+            var flightRecord = records.FirstOrDefault(record => record[FlightIdColumn].Equals(id));
+            if (flightRecord[isDeleteColumn].ToLower().Equals("true")) 
+                throw new InvalidOperationException("Flight Already Deleted");
+            flightRecord[isDeleteColumn] = "true";
+            _dataSource.WriteToDataSource(records);
             _cabinRepository.DeleteFlightCabins(id);
+            _passengerRepository.ApplyPassengerRefunds(_ticketRepository.CancelAllTicketsForFlight(id));
+        }
+        catch (InvalidOperationException e)
+        {
+            Console.WriteLine(e.Message);
         }
         catch (Exception e)
         {

@@ -9,4 +9,5 @@ public interface IPassengerRepository
     public IEnumerable<Passenger> GetPassengers();
     public void UpdatePassenger(Passenger passenger);
     public void DeletePassenger(string id);
+    public void ApplyPassengerRefunds(IEnumerable<(Guid,float)> passengerRefunds);
 }
