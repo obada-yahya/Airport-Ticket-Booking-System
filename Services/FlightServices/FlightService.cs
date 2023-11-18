@@ -5,7 +5,7 @@ namespace AirportTicketBooking.Services.FlightServices;
 
 public class FlightService : IFlightService
 {
-    public readonly IFlightRepository _flightRepository;
+    private readonly IFlightRepository _flightRepository;
 
     public FlightService(IFlightRepository flightRepository)
     {
