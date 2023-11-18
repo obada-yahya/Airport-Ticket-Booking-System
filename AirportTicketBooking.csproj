@@ -24,7 +24,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Services\FlightServices\" />
       <Folder Include="Services\PassengerServices\" />
       <Folder Include="Services\TicketServices\" />
     </ItemGroup>
