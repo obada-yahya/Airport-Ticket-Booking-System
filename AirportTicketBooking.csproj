@@ -23,8 +23,4 @@
       <ProjectReference Include="AirportTicketBookingDomain\AirportTicketBookingDomain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Services\TicketServices\" />
-    </ItemGroup>
-
 </Project>
